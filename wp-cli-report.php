@@ -28,7 +28,7 @@ try {
 function report( $assoc_args, $args ) {
 
 	if ( ! is_multisite() ) {
-		WP_CLI::error( 'This does not seems to be a MU Site.', true );
+		WP_CLI::error( 'Oops! Looks like you running this in a non WPMU setup.', true );
 	}
 
 	// Show help if no arguments are passed.
