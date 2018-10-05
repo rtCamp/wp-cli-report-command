@@ -1,0 +1,23 @@
+{
+  "name": "wp-cli/wp-cli-report",
+  "description": "Generates reports for MU Sites for themes and plugins.",
+  "type": "wp-cli-package",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Shashwat Mittal",
+      "email": "shashwat.mittal@rtcamp.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "": "src/"
+    },
+    "files": [ "wp-cli-report.php" ]
+  },
+  "require-dev": {
+    "wp-cli/wp-cli": "*"
+  }
+}
