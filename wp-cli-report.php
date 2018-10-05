@@ -47,6 +47,11 @@ function report( $assoc_args, $args ) {
 	if ( ! empty( $args['plugins'] ) && $args['plugins'] ) {
 		plugin_report( $format );
 	}
+
+	// Create and Populate report for all data including both plugins and themes.
+	if ( ! empty( $args['all'] ) && $args['all'] ) {
+		all_report( $format );
+	}
 }
 
 function theme_report( $format ) {
@@ -99,6 +104,52 @@ function plugin_report( $format ) {
 			}
 		}
 		array_push( $data, $plugin_data );
+	}
+
+	WP_CLI\Utils\format_items(
+		$format,
+		$data,
+		$header_data
+	);
+}
+
+function all_report( $format ) {
+	$sites                  = get_sites();
+	$themes                 = wp_get_themes();
+	$data                   = array();
+	$all_plugin_names       = array_map( 'format_plugin_name', array_keys( get_plugins() ) );
+	$network_active_plugins = array_map( 'format_plugin_name', array_keys( get_site_option( 'active_sitewide_plugins' ) ) );
+	$header_data            = array_merge( array(
+		'blog_id',
+		'domain',
+		'current_theme',
+		'parent_theme'
+	), $all_plugin_names );
+
+	foreach ( $sites as $site ) {
+		$blog_id        = $site->blog_id;
+		$domain         = $site->domain;
+		$active_plugins = array_map( 'format_plugin_name', array_values( get_blog_option( $site->blog_id, 'active_plugins' ) ) );
+		$theme_name     = get_blog_option( $blog_id, 'stylesheet' );
+		$parent_theme   = $themes[ $theme_name ]->parent()->name;
+		$all_data       = array(
+			'blog_id'       => $blog_id,
+			'domain'        => $domain,
+			'current_theme' => $theme_name,
+			'parent_theme'  => $parent_theme,
+		);
+
+		foreach ( $all_plugin_names as $plugin_name ) {
+			if ( in_array( $plugin_name, $network_active_plugins ) ) {
+				$all_data[ $plugin_name ] = 'network active';
+			} elseif ( in_array( $plugin_name, $active_plugins ) ) {
+				$all_data[ $plugin_name ] = 'active';
+			} else {
+				$all_data[ $plugin_name ] = 'inactive';
+			}
+		}
+
+		array_push( $data, $all_data );
 	}
 
 	WP_CLI\Utils\format_items(
