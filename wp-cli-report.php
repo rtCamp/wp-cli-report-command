@@ -24,6 +24,20 @@ try {
  * wp report --all
  * wp report --themes
  * wp report --plugins
+ *
+ * ## Options
+ *
+ * [--format=<format>]
+ * : Render output in a particular format.
+ * ---
+ * default: table
+ * options:
+ *   - table
+ *   - csv
+ *   - json
+ *   - count
+ *   - yaml
+ * ---
  */
 function report( $assoc_args, $args ) {
 
