@@ -62,7 +62,7 @@ function theme_report( $format ) {
 		$blog_id      = $site->blog_id;
 		$domain       = $site->domain;
 		$theme_name   = get_blog_option( $blog_id, 'stylesheet' );
-		$parent_theme = $themes[ $theme_name ]->parent()->name;
+		$parent_theme = ! empty( $themes[ $theme_name ] ) ? $themes[ $theme_name ]->parent()->name : null;
 		array_push( $data, array(
 			'blog_id'       => $blog_id,
 			'domain'        => $domain,
@@ -131,7 +131,7 @@ function all_report( $format ) {
 		$domain         = $site->domain;
 		$active_plugins = array_map( 'format_plugin_name', array_values( get_blog_option( $site->blog_id, 'active_plugins' ) ) );
 		$theme_name     = get_blog_option( $blog_id, 'stylesheet' );
-		$parent_theme   = $themes[ $theme_name ]->parent()->name;
+		$parent_theme   = ! empty( $themes[ $theme_name ] ) ? $themes[ $theme_name ]->parent()->name : null;
 		$all_data       = array(
 			'blog_id'       => $blog_id,
 			'domain'        => $domain,
