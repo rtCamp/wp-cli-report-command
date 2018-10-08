@@ -54,9 +54,14 @@ function report( $assoc_args, $args ) {
 	}
 }
 
+/**
+ * Gets the data for all the themes.
+ *
+ * @param $format
+ */
 function theme_report( $format ) {
-	$sites  = get_sites();
-	$themes = wp_get_themes();
+	$sites  = report_get_sites();
+	$themes = report_get_themes();
 	$data   = array();
 	foreach ( $sites as $site ) {
 		$blog_id      = $site->blog_id;
@@ -83,9 +88,14 @@ function theme_report( $format ) {
 	);
 }
 
+/**
+ * Gets the data for all the plugins.
+ *
+ * @param string $format
+ */
 function plugin_report( $format ) {
 
-	$sites                  = get_sites();
+	$sites                  = report_get_sites();
 	$all_plugin_names       = array_map( 'format_plugin_name', array_keys( get_plugins() ) );
 	$network_active_plugins = array_map( 'format_plugin_name', array_keys( get_site_option( 'active_sitewide_plugins' ) ) );
 	$data                   = array();
@@ -113,9 +123,14 @@ function plugin_report( $format ) {
 	);
 }
 
+/**
+ * Gets the data for Plugins as well as themes in a single report.
+ *
+ * @param string $format
+ */
 function all_report( $format ) {
-	$sites                  = get_sites();
-	$themes                 = wp_get_themes();
+	$sites                  = report_get_sites();
+	$themes                 = report_get_themes();
 	$data                   = array();
 	$all_plugin_names       = array_map( 'format_plugin_name', array_keys( get_plugins() ) );
 	$network_active_plugins = array_map( 'format_plugin_name', array_keys( get_site_option( 'active_sitewide_plugins' ) ) );
@@ -159,10 +174,41 @@ function all_report( $format ) {
 	);
 }
 
+/**
+ * Format the plugin name to show proper names in the report.
+ *
+ * @param string $param
+ *
+ * @return bool|mixed|string
+ */
 function format_plugin_name( $param ) {
 	if ( false !== strpos( $param, '/' ) ) {
 		return substr( $param, 0, strpos( $param, '/' ) );
 	} else {
 		return str_replace( '.php', '', $param );
 	}
+}
+
+/**
+ * Returns all the sites. The number is set to null to retrieve all
+ * the sites in network.
+ *
+ * @return array|int
+ */
+function report_get_sites() {
+	return get_sites( array(
+		'number' => null,
+	) );
+}
+
+/**
+ * Returns all the themes present in the themes directory.
+ * Includes themes with errors as well.
+ *
+ * @return WP_Theme[]
+ */
+function report_get_themes() {
+	return wp_get_themes( array(
+		'errors' => null,
+	) );
 }
