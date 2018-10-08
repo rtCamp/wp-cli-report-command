@@ -24,6 +24,11 @@ try {
  * wp report --all
  * wp report --themes
  * wp report --plugins
+ *
+ * @param array $assoc_args Associative arguments.
+ * @param array $args Arguments.
+ *
+ * @throws \WP_CLI\ExitException Exception.
  */
 function report( $assoc_args, $args ) {
 
@@ -57,7 +62,7 @@ function report( $assoc_args, $args ) {
 /**
  * Gets the data for all the themes.
  *
- * @param $format
+ * @param string $format Format of the report output.
  */
 function theme_report( $format ) {
 	$sites  = report_get_sites();
@@ -66,11 +71,13 @@ function theme_report( $format ) {
 	foreach ( $sites as $site ) {
 		$blog_id      = $site->blog_id;
 		$domain       = $site->domain;
+		$site_status  = get_site_status( $site );
 		$theme_name   = get_blog_option( $blog_id, 'stylesheet' );
 		$parent_theme = ! empty( $themes[ $theme_name ] ) ? $themes[ $theme_name ]->parent()->name : null;
 		array_push( $data, array(
 			'blog_id'       => $blog_id,
 			'domain'        => $domain,
+			'site_status'   => $site_status,
 			'current_theme' => $theme_name,
 			'parent_theme'  => $parent_theme,
 		) );
@@ -82,6 +89,7 @@ function theme_report( $format ) {
 		array(
 			'blog_id',
 			'domain',
+			'site_status',
 			'current_theme',
 			'parent_theme',
 		)
@@ -99,11 +107,16 @@ function plugin_report( $format ) {
 	$all_plugin_names       = array_map( 'format_plugin_name', array_keys( get_plugins() ) );
 	$network_active_plugins = array_map( 'format_plugin_name', array_keys( get_site_option( 'active_sitewide_plugins' ) ) );
 	$data                   = array();
-	$header_data            = array_merge( array( 'blog_id', 'domain' ), $all_plugin_names );
+	$header_data            = array_merge( array( 'blog_id', 'domain', 'site_status' ), $all_plugin_names );
 
 	foreach ( $sites as $site ) {
 		$active_plugins = array_map( 'format_plugin_name', array_values( get_blog_option( $site->blog_id, 'active_plugins' ) ) );
-		$plugin_data    = array( 'blog_id' => $site->blog_id, 'domain' => $site->domain );
+		$site_status    = get_site_status( $site );
+		$plugin_data    = array(
+			'blog_id'     => $site->blog_id,
+			'domain'      => $site->domain,
+			'site_status' => $site_status,
+		);
 		foreach ( $all_plugin_names as $plugin_name ) {
 			if ( in_array( $plugin_name, $network_active_plugins ) ) {
 				$plugin_data[ $plugin_name ] = 'network active';
@@ -137,6 +150,7 @@ function all_report( $format ) {
 	$header_data            = array_merge( array(
 		'blog_id',
 		'domain',
+		'site_status',
 		'current_theme',
 		'parent_theme'
 	), $all_plugin_names );
@@ -144,12 +158,14 @@ function all_report( $format ) {
 	foreach ( $sites as $site ) {
 		$blog_id        = $site->blog_id;
 		$domain         = $site->domain;
+		$site_status    = get_site_status( $site );
 		$active_plugins = array_map( 'format_plugin_name', array_values( get_blog_option( $site->blog_id, 'active_plugins' ) ) );
 		$theme_name     = get_blog_option( $blog_id, 'stylesheet' );
 		$parent_theme   = ! empty( $themes[ $theme_name ] ) ? $themes[ $theme_name ]->parent()->name : null;
 		$all_data       = array(
 			'blog_id'       => $blog_id,
 			'domain'        => $domain,
+			'site_status'   => $site_status,
 			'current_theme' => $theme_name,
 			'parent_theme'  => $parent_theme,
 		);
@@ -211,4 +227,27 @@ function report_get_themes() {
 	return wp_get_themes( array(
 		'errors' => null,
 	) );
+}
+
+/**
+ * Get the site status.
+ *
+ * @param WP_Site $site The site object.
+ *
+ * @return string The Site status.
+ */
+function get_site_status( $site ) {
+	if ( $site->public ) {
+		return 'public';
+	} elseif ( $site->archived ) {
+		return 'archived';
+	} elseif ( $site->deleted ) {
+		return 'deleted';
+	} elseif ( $site->mature ) {
+		return 'mature';
+	} elseif ( $site->spam ) {
+		return 'spam';
+	} else {
+		return 'Unknown';
+	}
 }
