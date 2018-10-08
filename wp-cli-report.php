@@ -25,6 +25,20 @@ try {
  * wp report --themes
  * wp report --plugins
  *
+ * ## Options
+ *
+ * [--format=<format>]
+ * : Render output in a particular format.
+ * ---
+ * default: table
+ * options:
+ *   - table
+ *   - csv
+ *   - json
+ *   - count
+ *   - yaml
+ * ---
+ *
  * @param array $assoc_args Associative arguments.
  * @param array $args Arguments.
  *
