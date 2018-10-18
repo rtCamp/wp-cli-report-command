@@ -25,7 +25,16 @@ try {
  * wp report --themes
  * wp report --plugins
  *
- * ## Options
+ * [--all]
+ * : Generates report for both themes and plugins.
+ *
+ * [--themes]
+ * : Generate report for themes.
+ *
+ * [--plugins]
+ * : Generate report for plugins.
+ *
+ * ## options
  *
  * [--format=<format>]
  * : Render output in a particular format.
@@ -51,7 +60,7 @@ function report( $assoc_args, $args ) {
 	}
 
 	// Show help if no arguments are passed.
-	if ( empty( $args ) ) {
+	if ( 1 === count( $args ) ) {
 		WP_CLI::runcommand( 'help report' );
 	}
 
