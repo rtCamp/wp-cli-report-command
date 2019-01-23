@@ -7,8 +7,6 @@ Quick links: [Overview](#overview) | [Using](#using) | [Installing](#installing)
 
 ## Overview
 
-`wp report` lets you easily generate a report of all the themes and plugins in multisite environment.
-
 `wp report` provides you the compiled report for all the sites on your MU setup with the details of all the active, network active and inactive plugins and themes.
 
 ```
