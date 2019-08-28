@@ -64,3 +64,8 @@ Once you’ve done a bit of searching and discovered there isn’t an open or fi
 Want to contribute a new feature? Please first [open a new issue](https://github.com/rtCamp/wp-cli-report-command/issues/new) to discuss whether the feature is a good fit for the project.
 
 Once you are done working on the feature or issue, create a pull request with appropriate information.
+
+
+## Does this interest you?
+
+<a href="https://rtcamp.com/"><img src="https://rtcamp.com/wp-content/uploads/2019/04/github-banner@2x.png" alt="Join us at rtCamp, we specialize in providing high performance enterprise WordPress solutions"></a>
